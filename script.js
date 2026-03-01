@@ -32,20 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (Array.isArray(data) && data.length > 0) {
         allCoins = data;
-
-        // Cache successful data
         localStorage.setItem("cachedCoins", JSON.stringify(allCoins));
-
         renderMarket();
         renderWatchlist();
       }
 
-      apiWarning.classList.remove("active");
+      apiWarning?.classList.remove("active");
 
     } catch (error) {
       console.error("API Error:", error);
 
-      // Fallback to cached data
       const cached = JSON.parse(localStorage.getItem("cachedCoins")) || [];
       if (cached.length > 0) {
         allCoins = cached;
@@ -53,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderWatchlist();
       }
 
-      apiWarning.classList.add("active");
+      apiWarning?.classList.add("active");
     }
   }
 
@@ -85,77 +81,61 @@ document.addEventListener("DOMContentLoaded", function () {
     watchlist = [...new Set(watchlist)];
     localStorage.setItem("watchlist", JSON.stringify(watchlist));
 
-    if (watchlist.length === 0) {
-      showAddCard();
-      return;
-    }
-
     const availableCoins = allCoins.length > 0
       ? allCoins
       : JSON.parse(localStorage.getItem("cachedCoins")) || [];
 
-    watchlist.forEach((id) => {
-      const coin = availableCoins.find((c) => c.id === id);
+    if (watchlist.length > 0) {
+      watchlist.forEach((id) => {
+        const coin = availableCoins.find((c) => c.id === id);
+        if (coin) {
+          watchlistContainer.appendChild(createCoinCard(coin));
+        }
+      });
+    }
 
-      if (coin) {
-        watchlistContainer.appendChild(createCoinCard(coin));
-      }
-    });
-
-    showAddCard();
-  }
-
-  function showAddCard() {
+    // Always show Add Card
     const addCard = document.createElement("div");
     addCard.className = "add-watchlist-card";
     addCard.innerHTML = `
       <div class="plus-circle">+</div>
       <p>Add asset to watchlist</p>
     `;
-    addCard.style.cursor = "pointer";
-    addCard.addEventListener("click", activateSelectionMode);
     watchlistContainer.appendChild(addCard);
   }
 
   /* =========================
-     SELECTION MODE
+     EVENT DELEGATION (CRITICAL FIX)
   ========================= */
 
-  function activateSelectionMode() {
+  // Click on "Add asset to watchlist"
+  watchlistContainer.addEventListener("click", function (e) {
+    const addCard = e.target.closest(".add-watchlist-card");
+    if (!addCard) return;
+
     selectionMode = true;
+    marketContainer.classList.add("select-mode");
+  });
 
-    const marketCards = document.querySelectorAll("#market-container .card");
-
-    marketCards.forEach((card) => {
-      card.classList.add("selectable");
-      card.addEventListener("click", handleSelection);
-    });
-  }
-
-  function deactivateSelectionMode() {
-    selectionMode = false;
-
-    const marketCards = document.querySelectorAll("#market-container .card");
-
-    marketCards.forEach((card) => {
-      card.classList.remove("selectable");
-      card.removeEventListener("click", handleSelection);
-    });
-  }
-
-  function handleSelection(e) {
+  // Click on market card
+  marketContainer.addEventListener("click", function (e) {
     if (!selectionMode) return;
 
-    const coinId = e.currentTarget.dataset.id;
+    const card = e.target.closest(".card");
+    if (!card) return;
+
+    const coinId = card.dataset.id;
 
     if (!watchlist.includes(coinId)) {
       watchlist.push(coinId);
       localStorage.setItem("watchlist", JSON.stringify(watchlist));
     }
 
-    deactivateSelectionMode();
+    selectionMode = false;
+    marketContainer.classList.remove("select-mode");
+
     renderWatchlist();
-  }
+  });
 
   /* =========================
      CREATE CARD
@@ -164,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function createCoinCard(coin) {
     const card = document.createElement("div");
     card.className = "card";
-    card.dataset.id = coin.id;
+    card.dataset.id = coin.id; // VERY IMPORTANT
 
     const isPositive = coin.price_change_percentage_24h >= 0;
 
@@ -203,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
      SEARCH
   ========================= */
 
-  searchInput.addEventListener("input", (e) => {
+  searchInput.addEventListener("input", function (e) {
     const value = e.target.value.toLowerCase().trim();
 
     if (!value) {
@@ -224,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
 
   window.closeWarning = function () {
-    apiWarning.classList.remove("active");
+    apiWarning?.classList.remove("active");
   };
 
   /* =========================
@@ -232,6 +212,6 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
 
   fetchCrypto();
-  setInterval(fetchCrypto, 120000); // 2 minutes to reduce rate limit risk
+  setInterval(fetchCrypto, 120000);
 
 });
