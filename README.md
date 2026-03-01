@@ -9,8 +9,8 @@ Deployed using **Netlify**.
 
 ## 🌐 Live Demo
 
-- 🔗 **Deployed Link:**()
-- 💻 **GitHub Repository:** ()
+- 🔗 **Deployed Link:**(coruscating-empanada-6e37d7.netlify.app)
+- 💻 **GitHub Repository:** (https://github.com/KPAVITRA-27/CryptoMarket-Project)
 
 ---
 
@@ -183,3 +183,4 @@ Frontend Developer
 ## 📜 License
 
 This project is built for educational purposes.
+
