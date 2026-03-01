@@ -1,153 +1,237 @@
-const marketContainer = document.getElementById("market-container");
-const watchlistContainer = document.getElementById("watchlist-container");
-const searchInput = document.getElementById("search");
+document.addEventListener("DOMContentLoaded", function () {
 
-let allCoins = [];
-let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
+  const marketContainer = document.getElementById("market-container");
+  const watchlistContainer = document.getElementById("watchlist-container");
+  const searchInput = document.getElementById("search");
+  const apiWarning = document.getElementById("apiWarning");
 
-/* =========================
-   FETCH CRYPTO DATA
-========================= */
+  let allCoins = JSON.parse(localStorage.getItem("cachedCoins")) || [];
+  let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
+  let selectionMode = false;
 
-async function fetchCrypto() {
-  try {
-    const response = await fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=false"
-    );
+  /* =========================
+     INITIAL RENDER FROM CACHE
+  ========================= */
 
-    if (!response.ok) throw new Error("API failed");
+  renderMarket();
+  renderWatchlist();
 
-    const data = await response.json();
-    allCoins = data;
+  /* =========================
+     FETCH CRYPTO DATA
+  ========================= */
 
-    renderMarket();
-    renderWatchlist();
-  } catch (error) {
-    console.error("API Error:", error);
-  }
-}
+  async function fetchCrypto() {
+    try {
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=false"
+      );
 
-/* =========================
-   RENDER MARKET
-========================= */
+      if (!response.ok) throw new Error("API failed");
 
-function renderMarket() {
-  marketContainer.innerHTML = "";
+      const data = await response.json();
 
-  allCoins.slice(0, 8).forEach((coin) => {
-    marketContainer.appendChild(createCoinCard(coin));
-  });
-}
+      if (Array.isArray(data) && data.length > 0) {
+        allCoins = data;
 
-/* =========================
-   RENDER WATCHLIST
-========================= */
+        // Cache successful data
+        localStorage.setItem("cachedCoins", JSON.stringify(allCoins));
 
-function renderWatchlist() {
-  watchlistContainer.innerHTML = "";
+        renderMarket();
+        renderWatchlist();
+      }
 
-  [...new Set(watchlist)].slice(0, 3).forEach((id) => {
-    const coin = allCoins.find((c) => c.id === id);
-    if (coin) {
-      watchlistContainer.appendChild(createCoinCard(coin));
+      apiWarning.classList.remove("active");
+
+    } catch (error) {
+      console.error("API Error:", error);
+
+      // Fallback to cached data
+      const cached = JSON.parse(localStorage.getItem("cachedCoins")) || [];
+      if (cached.length > 0) {
+        allCoins = cached;
+        renderMarket();
+        renderWatchlist();
+      }
+
+      apiWarning.classList.add("active");
     }
-  });
+  }
 
-  const addCard = document.createElement("div");
-  addCard.classList.add("add-watchlist-card");
-  addCard.innerHTML = `
-    <div class="plus-circle">+</div>
-    <p>Add asset to watchlist</p>
-  `;
-  watchlistContainer.appendChild(addCard);
-}
+  /* =========================
+     RENDER MARKET
+  ========================= */
 
-/* =========================
-   CREATE CARD
-========================= */
+  function renderMarket(coins = allCoins.slice(0, 8)) {
+    marketContainer.innerHTML = "";
 
-function createCoinCard(coin) {
-  const card = document.createElement("div");
-  card.className = "card";
+    if (!coins || coins.length === 0) {
+      marketContainer.innerHTML =
+        `<div class="error-message">No market data available.</div>`;
+      return;
+    }
 
-  const isPositive = coin.price_change_percentage_24h >= 0;
+    coins.forEach((coin) => {
+      marketContainer.appendChild(createCoinCard(coin));
+    });
+  }
 
-  const upTrend = `
-    <path 
-      d="M2 14 L6 10 L10 12 L14 6 L18 8 L22 4 L20 4 L22 4 L22 6"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  `;
+  /* =========================
+     RENDER WATCHLIST
+  ========================= */
 
-  const downTrend = `
-    <path 
-      d="M2 4 L6 8 L10 6 L14 12 L18 10 L22 14 L20 14 L22 14 L22 12"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  `;
+  function renderWatchlist() {
+    watchlistContainer.innerHTML = "";
 
-  card.innerHTML = `
-    <div class="card-header">
+    watchlist = [...new Set(watchlist)];
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+
+    if (watchlist.length === 0) {
+      showAddCard();
+      return;
+    }
+
+    const availableCoins = allCoins.length > 0
+      ? allCoins
+      : JSON.parse(localStorage.getItem("cachedCoins")) || [];
+
+    watchlist.forEach((id) => {
+      const coin = availableCoins.find((c) => c.id === id);
+
+      if (coin) {
+        watchlistContainer.appendChild(createCoinCard(coin));
+      }
+    });
+
+    showAddCard();
+  }
+
+  function showAddCard() {
+    const addCard = document.createElement("div");
+    addCard.className = "add-watchlist-card";
+    addCard.innerHTML = `
+      <div class="plus-circle">+</div>
+      <p>Add asset to watchlist</p>
+    `;
+    addCard.style.cursor = "pointer";
+    addCard.addEventListener("click", activateSelectionMode);
+    watchlistContainer.appendChild(addCard);
+  }
+
+  /* =========================
+     SELECTION MODE
+  ========================= */
+
+  function activateSelectionMode() {
+    selectionMode = true;
+
+    const marketCards = document.querySelectorAll("#market-container .card");
+
+    marketCards.forEach((card) => {
+      card.classList.add("selectable");
+      card.addEventListener("click", handleSelection);
+    });
+  }
+
+  function deactivateSelectionMode() {
+    selectionMode = false;
+
+    const marketCards = document.querySelectorAll("#market-container .card");
+
+    marketCards.forEach((card) => {
+      card.classList.remove("selectable");
+      card.removeEventListener("click", handleSelection);
+    });
+  }
+
+  function handleSelection(e) {
+    if (!selectionMode) return;
+
+    const coinId = e.currentTarget.dataset.id;
+
+    if (!watchlist.includes(coinId)) {
+      watchlist.push(coinId);
+      localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    }
+
+    deactivateSelectionMode();
+    renderWatchlist();
+  }
+
+  /* =========================
+     CREATE CARD
+  ========================= */
+
+  function createCoinCard(coin) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.id = coin.id;
+
+    const isPositive = coin.price_change_percentage_24h >= 0;
+
+    card.innerHTML = `
+      <div class="card-header">
         <div class="header-left">
-            <div class="icon-circle">
-                <img src="${coin.image}" alt="${coin.name}" />
-            </div>
-            <div class="coin-details">
-                <div class="coin-name">${coin.name}</div>
-                <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
-            </div>
+          <div class="icon-circle">
+            <img src="${coin.image}" alt="${coin.name}" />
+          </div>
+          <div class="coin-details">
+            <div class="coin-name">${coin.name}</div>
+            <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
+          </div>
         </div>
         <div class="star">★</div>
-    </div>
+      </div>
 
-    <div class="card-body">
+      <div class="card-body">
         <div class="price">
-            $${coin.current_price.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}
+          $${coin.current_price.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}
         </div>
 
         <div class="change ${isPositive ? "positive" : "negative"}">
-            <svg class="trend-icon" viewBox="0 0 24 18">
-                ${isPositive ? upTrend : downTrend}
-            </svg>
-            ${Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
+          ${Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
         </div>
-    </div>
-  `;
+      </div>
+    `;
 
-  return card;
-}
+    return card;
+  }
 
-/* =========================
-   SEARCH FUNCTION
-========================= */
+  /* =========================
+     SEARCH
+  ========================= */
 
-searchInput.addEventListener("input", (e) => {
-  const value = e.target.value.toLowerCase();
+  searchInput.addEventListener("input", (e) => {
+    const value = e.target.value.toLowerCase().trim();
 
-  const filtered = allCoins.filter((coin) =>
-    coin.name.toLowerCase().includes(value)
-  );
+    if (!value) {
+      renderMarket();
+      return;
+    }
 
-  marketContainer.innerHTML = "";
-  filtered.slice(0, 8).forEach((coin) => {
-    marketContainer.appendChild(createCoinCard(coin));
+    const filtered = allCoins.filter((coin) =>
+      coin.name.toLowerCase().includes(value) ||
+      coin.symbol.toLowerCase().includes(value)
+    );
+
+    renderMarket(filtered.slice(0, 8));
   });
+
+  /* =========================
+     CLOSE WARNING
+  ========================= */
+
+  window.closeWarning = function () {
+    apiWarning.classList.remove("active");
+  };
+
+  /* =========================
+     INIT FETCH
+  ========================= */
+
+  fetchCrypto();
+  setInterval(fetchCrypto, 120000); // 2 minutes to reduce rate limit risk
+
 });
-
-/* =========================
-   INITIAL LOAD
-========================= */
-
-fetchCrypto();
-setInterval(fetchCrypto, 30000);
