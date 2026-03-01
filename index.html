@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app-wrapper">
+
+   
+    <div class="navbar">
+
+      <div class="nav-left">
+        <div class="logo">Crypto<span>Pulse</span></div>
+        <a class="active">Market</a>
+        <a>Portfolio</a>
+        <a>Exchange</a>
+      </div>
+
+      <div class="nav-right">
+
+        <!-- Search -->
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="16" y1="16" x2="21" y2="21" />
+          </svg>
+          <input type="text" id="search" placeholder="Search assets..." />
+        </div>
+
+        <!-- Bell -->
+        <div class="notification">
+          <svg class="bell-icon" viewBox="0 0 24 24">
+            <path d="M18 8a6 6 0 10-12 0c0 7-3 6-3 8h18c0-2-3-1-3-8"/>
+            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+        </div>
+
+        <!-- Profile -->
+        <div class="profile-circle">JD</div>
+
+      </div>
+    </div>
+    <!-- END NAVBAR -->
+
+
+    <!-- WATCHLIST -->
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2>MyWatchlist</h2>
+          <p class="section-subtitle">
+            Your personalized collection of assets
+          </p>
+        </div>
+        <a class="edit-link">Edit List</a>
+      </div>
+
+      <div id="watchlist-container" class="card-grid"></div>
+    </div>
+
+
+    <!-- MARKET OVERVIEW -->
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2>Market Overview</h2>
+          <p class="section-subtitle">
+            Real time data for top performing assets
+          </p>
+        </div>
+        <button class="all-assets-btn">All Assets</button>
+      </div>
+
+      <div id="market-container" class="card-grid"></div>
+    </div>
+
+
+    <!-- Bottom Button -->
+    <div class="bottom-section">
+      <button class="view-all-btn">
+        View All Cryptocurrencies
+      </button>
+    </div>
+
+  </div> <!-- End app-wrapper -->
+
+
+  <!-- API WARNING -->
+  <div class="api-warning" id="apiWarning">
+    <div class="warning-left">
+      <div class="warning-icon">!</div>
+      <div>
+        <div class="warning-title">API Connection Warning</div>
+        <div class="warning-text">
+          Real-time prices may be delayed up to 30 seconds. Checking connection...
+        </div>
+      </div>
+    </div>
+    <div class="warning-close" onclick="closeWarning()">✕</div>
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
