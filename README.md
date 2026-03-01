@@ -1,7 +1,8 @@
-# 🚀 Crypto Market Overview 
+# 🚀 Crypto Market Dashboard
 
-A responsive **Crypto Market Dashboard** built using ** HTML, CSS and JavaScript**.  
-The application displays live cryptocurrency market data, supports search functionality, and allows users to create a persistent watchlist.
+A responsive **Crypto Market Dashboard** built using **HTML, CSS, and JavaScript**.
+
+The application fetches live cryptocurrency market data, provides real-time search functionality, and allows users to create a persistent watchlist.
 
 Deployed using **Netlify**.
 
@@ -9,37 +10,66 @@ Deployed using **Netlify**.
 
 ## 🌐 Live Demo
 
-- 🔗 **Deployed Link:**(coruscating-empanada-6e37d7.netlify.app)
-- 💻 **GitHub Repository:** (https://github.com/KPAVITRA-27/CryptoMarket-Project)
+🔗 **Deployed Link:**  
+https://beautiful-kataifi-79643d.netlify.app  
+
+💻 **GitHub Repository:**  
+https://github.com/KPAVITRA-27/CryptoMarket-Project  
+
+---
+
+## 🖥️ Screenshots
+
+### 📊 Dashboard View
+
+<img width="1030" height="880" alt="Screenshot 2026-03-01 232524" src="https://github.com/user-attachments/assets/cb17dec5-1502-453c-a08a-3fcbf0b0a6b1" />
+
+
+---
+
+### ⭐ Watchlist Section
+
+<img width="1030" height="880" alt="Screenshot 2026-03-01 232524" src="https://github.com/user-attachments/assets/f8868b8e-d1f5-4ae5-b991-f6c4619d90be" />
+
+
+---
+
+### ⚠️ API Failure Handling
+
+<img width="1408" height="842" alt="Screenshot 2026-03-01 232448" src="https://github.com/user-attachments/assets/c87594ac-deb2-4831-8037-99eab7e6e9e8" />
+
 
 ---
 
 ## 📌 Features
 
 ### ✅ Market Viewer
-- Fetches live cryptocurrency data from CoinGecko API
+
+- Fetches live cryptocurrency data from **CoinGecko API**
 - Displays:
   - Coin Name
   - Symbol
   - Current Price
   - 24h Price Change %
-- Color-coded price change:
-  - 🟢 Green → Positive change
-  - 🔴 Red → Negative change
-- Auto-refresh every 2 minutes
+- 🟢 Green → Positive change
+- 🔴 Red → Negative change
+- Auto refresh every 2 minutes
 - Graceful API failure handling
 
 ---
 
 ### ✅ Search Functionality
+
 - Real-time filtering
 - Search by:
   - Coin name
   - Coin symbol
+- Instant UI updates
 
 ---
 
 ### ✅ Watchlist Feature
+
 - Add assets via selection mode
 - Watchlist displayed separately
 - Prevents duplicate entries
@@ -68,7 +98,11 @@ crypto-dashboard/
 ├── index.html
 ├── style.css
 ├── script.js
-└── README.md
+├── README.md
+└── screenshots/
+      dashboard.png
+      watchlist.png
+      api-warning.png
 ```
 
 ---
@@ -100,8 +134,8 @@ Render UI without breaking
 ## ⚙️ Tech Stack
 
 - HTML5
-- CSS3 (No UI libraries)
-- JavaScript 
+- CSS3
+- JavaScript (Vanilla JS)
 - CoinGecko Public API
 - LocalStorage
 - Netlify (Deployment)
@@ -113,13 +147,13 @@ Render UI without breaking
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/crypto-dashboard.git
+git clone https://github.com/KPAVITRA-27/CryptoMarket-Project.git
 ```
 
 2. Navigate to the project folder:
 
 ```bash
-cd crypto-dashboard
+cd CryptoMarket-Project
 ```
 
 3. Open `index.html` in your browser.
@@ -175,7 +209,7 @@ Production considerations included:
 
 ## 👩‍💻 Author
 
-** K Pavitra**  
+**K Pavitra**  
 Frontend Developer  
 
 ---
@@ -183,4 +217,3 @@ Frontend Developer
 ## 📜 License
 
 This project is built for educational purposes.
-
