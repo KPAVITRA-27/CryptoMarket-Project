@@ -11,7 +11,7 @@ Deployed using **Netlify**.
 ## 🌐 Live Demo
 
 🔗 **Deployed Link:**  
-https://beautiful-kataifi-79643d.netlify.app  
+crypto-market-project-dashboard-o4qcb6v18-kpavitra-27s-projects.vercel.app
 
 💻 **GitHub Repository:**  
 https://github.com/KPAVITRA-27/CryptoMarket-Project  
@@ -217,3 +217,4 @@ Frontend Developer
 ## 📜 License
 
 This project is built for educational purposes.
+
