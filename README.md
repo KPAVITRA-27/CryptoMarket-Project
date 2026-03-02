@@ -138,7 +138,7 @@ Render UI without breaking
 - JavaScript (Vanilla JS)
 - CoinGecko Public API
 - LocalStorage
-- Netlify (Deployment)
+- Vercel (Deployment)
 
 ---
 
@@ -217,4 +217,5 @@ Frontend Developer
 ## 📜 License
 
 This project is built for educational purposes.
+
 
