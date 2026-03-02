@@ -53,7 +53,7 @@ https://github.com/KPAVITRA-27/CryptoMarket-Project
   - 24h Price Change %
 - 🟢 Green → Positive change
 - 🔴 Red → Negative change
-- Auto refresh every 2 minutes
+- Auto refresh every 30 seconds
 - Graceful API failure handling
 
 ---
@@ -217,5 +217,6 @@ Frontend Developer
 ## 📜 License
 
 This project is built for educational purposes.
+
 
 
