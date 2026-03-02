@@ -206,12 +206,10 @@ document.addEventListener("DOMContentLoaded", function () {
      INIT
   ========================= */
 
-  if (allCoins.length > 0) {
-    renderMarket();
-    renderWatchlist();
-  }
+  renderWatchlist();
 
   fetchCrypto();
   setInterval(fetchCrypto, 30000);
 
 });
+
